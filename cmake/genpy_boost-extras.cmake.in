@@ -1,0 +1,75 @@
+find_package(Boost COMPONENTS python)
+include_directories(${Boost_INCLUDE_DIRS})
+
+find_package(PythonLibs)
+include_directories(${PYTHON_INCLUDE_PATH})
+
+#Make sure we can find buildspace generated messages
+include_directories(${CMAKE_BINARY_DIR}/gen/cpp)
+
+if(@PACKAGE_NAME@_SOURCE_DIR)
+  find_program_required(GENPY_BOOST_BIN gen_py_boost.py PATHS ${@PACKAGE_NAME@_SOURCE_DIR}/scripts)
+  set(GENPY_BOOST_TEMPLATE_DIR ${@PACKAGE_NAME@_SOURCE_DIR}/scripts)
+else()
+  find_program_required(GENPY_BOOST_BIN gen_py_boost.py)
+  set(GENPY_BOOST_TEMPLATE_DIR ${CMAKE_INSTALL_PREFIX}/share/genpy_boost)
+endif()
+
+# Generate .cpp
+# The generated .h files should be added ALL_GEN_OUTPUT_FILES_cpp
+macro(_generate_msg_py_boost ARG_PKG ARG_MSG ARG_IFLAGS ARG_MSG_DEPS ARG_GEN_OUTPUT_DIR)
+
+  #Create input and output filenames
+  get_filename_component(MSG_NAME ${ARG_MSG} NAME)
+  get_filename_component(MSG_SHORT_NAME ${ARG_MSG} NAME_WE)
+  set(MSG_INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_MSG})
+
+  set(MSG_GENERATED_NAME ${MSG_SHORT_NAME}.cpp)
+  set(GEN_OUTPUT_FILE ${ARG_GEN_OUTPUT_DIR}/${MSG_GENERATED_NAME})
+
+  assert(CATKIN_ENV)
+  add_custom_command(OUTPUT ${GEN_OUTPUT_FILE}
+    DEPENDS ${GENPY_BOOST_BIN} ${MSG_INPUT_FILE} ${ARG_MSG_DEPS}
+    COMMAND ${CATKIN_ENV} ${GENPY_BOOST_BIN} ${MSG_INPUT_FILE}
+    ${ARG_IFLAGS}
+    -p ${ARG_PKG}
+    -o ${ARG_GEN_OUTPUT_DIR}
+    -e ${GENPY_BOOST_TEMPLATE_DIR}
+    COMMENT "Generating Python Boost code from ${ARG_PKG}/${MSG_NAME}"
+    )
+
+  # Create target to compile the generated file
+#  list(APPEND ALL_GEN_OUTPUT_FILES_cpp "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${boost_lib_target}.so")
+   list(APPEND ALL_GEN_OUTPUT_FILES_py_boost ${GEN_OUTPUT_FILE})
+
+endmacro()
+
+#gencpp uses the same program to generate srv and msg files, so call the same macro
+macro(_generate_srv_py_boost ARG_PKG ARG_SRV ARG_IFLAGS ARG_MSG_DEPS ARG_GEN_OUTPUT_DIR)
+  _generate_msg_py_boost(${ARG_PKG} ${ARG_SRV} "${ARG_IFLAGS}" "${ARG_MSG_DEPS}" ${ARG_GEN_OUTPUT_DIR})
+endmacro()
+
+macro(_generate_module_py_boost ARG_PKG ARG_GEN_OUTPUT_DIR ARG_GENERATED_FILES)
+
+  # create a main.cpp file here
+  # calling all the export_MSG functions
+  # BOOST_PYTHON_MODULE(std_msgs)
+  # {
+  #   export_MSG1();
+  #   export_MSG2();
+  # }
+
+  # build module
+  set(boost_lib_target "${ARG_PKG}/msg")
+
+  file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${ARG_PKG})
+  add_library(${boost_lib_target} SHARED ${ARG_GENERATED_FILES})
+  set_target_properties(${boost_lib_target} PROPERTIES PREFIX "" SUFFIX .so)
+  add_dependencies(${boost_lib_target} ${ARG_PKG}_gencpp)
+  target_link_libraries(${boost_lib_target} ${Boost_LIBRARIES})
+
+  list(APPEND ALL_GEN_OUTPUT_FILES_py_boost ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${boost_lib_target}.so)
+
+endmacro()
+
+set(genpy_boost_INSTALL_DIR lib/py_boost)

@@ -1,0 +1,18 @@
+Package: genpy_boost
+Version: 0.0.0
+Section: misc
+Priority: extra
+Architecture: all
+Depends: ${misc:Depends} python-empy, cmake, make, @(CATKIN_PACKAGE_PREFIX)genmsg, @(CATKIN_PACKAGE_PREFIX)catkin
+Build-Depends: debhelper (>= 7), cmake, gcc, make, python, python-empy, python-setuptools,
+               @(CATKIN_PACKAGE_PREFIX)catkin, @(CATKIN_PACKAGE_PREFIX)genmsg 
+Description: Willow Garage low level build system macros and infrastructure
+Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
+Maintainer: Troy Straszheim <straszheim@willowgarage.com>
+Homepage: http://www.ros.org
+
+Catkin-ProjectName: genpy_boost
+Catkin-CopyrightType:  willowgarage
+Catkin-Depends: catkin, genmsg
+Catkin-ROS-Message-Generator: py_boost
+Catkin-DebRulesType: python_distutils
