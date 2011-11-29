@@ -68,8 +68,6 @@ macro(_generate_module_py_boost ARG_PKG ARG_GEN_OUTPUT_DIR ARG_GENERATED_FILES)
   add_dependencies(${boost_lib_target} ${ARG_PKG}_gencpp)
   target_link_libraries(${boost_lib_target} ${Boost_LIBRARIES})
 
-  list(APPEND ALL_GEN_OUTPUT_FILES_py_boost ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${boost_lib_target}.so)
-
 endmacro()
 
 set(genpy_boost_INSTALL_DIR lib/py_boost)
