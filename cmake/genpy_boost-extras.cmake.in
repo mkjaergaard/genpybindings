@@ -59,14 +59,31 @@ macro(_generate_module_py_boost ARG_PKG ARG_GEN_OUTPUT_DIR ARG_GENERATED_FILES)
   #   export_MSG2();
   # }
 
+  set(GEN_OUTPUT_FILE ${ARG_GEN_OUTPUT_DIR}/main.cpp)
+
+  assert(CATKIN_ENV)
+  add_custom_command(OUTPUT ${GEN_OUTPUT_FILE}
+    DEPENDS ${GENPY_BOOST_BIN} ${ARG_GENERATED_FILES} ${ARG_MSG_DEPS}
+    COMMAND ${CATKIN_ENV} ${GENPY_BOOST_BIN}
+    -m
+    -p ${ARG_PKG}
+    -o ${ARG_GEN_OUTPUT_DIR}
+    -e ${GENPY_BOOST_TEMPLATE_DIR}
+    COMMENT "Generating Python Boost module for ${ARG_PKG}"
+    )
+
+  # rule to put __init__.py into build dir
+  file(COPY ${GENPY_BOOST_TEMPLATE_DIR}/__init__.py DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${ARG_PKG})
+
   # build module
   set(boost_lib_target "${ARG_PKG}/msg")
 
   file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${ARG_PKG})
-  add_library(${boost_lib_target} SHARED ${ARG_GENERATED_FILES})
-  set_target_properties(${boost_lib_target} PROPERTIES PREFIX "" SUFFIX .so)
+  add_library(${boost_lib_target} SHARED ${ARG_GENERATED_FILES} ${GEN_OUTPUT_FILE})
+  set_target_properties(${boost_lib_target} PROPERTIES PREFIX "")
   add_dependencies(${boost_lib_target} ${ARG_PKG}_gencpp)
   target_link_libraries(${boost_lib_target} ${Boost_LIBRARIES})
+  
 
 endmacro()
 

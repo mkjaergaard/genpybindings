@@ -41,6 +41,7 @@ import genmsg.template_tools
 
 msg_template_map = { 'msg.cpp.template':'@NAME@.cpp' }
 srv_template_map = { 'srv.cpp.template':'@NAME@.cpp' }
+mod_template_map = { 'main.cpp.template':'main.cpp' }
 
 if __name__ == "__main__":
-    genmsg.template_tools.generate_from_command_line_options(sys.argv, msg_template_map, srv_template_map)
+    genmsg.template_tools.generate_from_command_line_options(sys.argv, msg_template_map, srv_template_map, mod_template_map)

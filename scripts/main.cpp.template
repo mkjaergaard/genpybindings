@@ -1,0 +1,29 @@
+@###############################################
+@#
+@# ROS message source code generation for C++
+@#
+@# EmPy template for generating the main.cpp file
+@#
+@###############################################
+@# Start of Template
+@#
+@# Context:
+@#  - files (List of files in the same directory)
+@###############################################
+#include <boost/python.hpp>
+
+using namespace boost::python;
+
+@{msg_list = set([f[0:-4] for f in files if f.endswith('.cpp') and f != 'main.cpp'])}@
+
+@[for m in msg_list]@
+void export_@(m)();
+@[end for]@
+
+BOOST_PYTHON_MODULE(msg)
+{
+@[for m in msg_list]@
+export_@(m)();
+@[end for]@
+}
+
