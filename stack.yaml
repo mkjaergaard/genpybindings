@@ -1,4 +1,4 @@
-Package: genpy_boost
+Package: genpy-boost
 Version: 0.0.0
 Section: misc
 Priority: extra
@@ -13,6 +13,6 @@ Homepage: http://www.ros.org
 
 Catkin-ProjectName: genpy_boost
 Catkin-CopyrightType:  willowgarage
-Catkin-Depends: catkin, genmsg
+Catkin-Depends: catkin, genmsg, roscpp_core
 Catkin-ROS-Message-Generator: py_boost
 Catkin-DebRulesType: python_distutils
