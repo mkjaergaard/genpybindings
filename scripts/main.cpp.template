@@ -22,8 +22,11 @@ void export_@(m)();
 
 BOOST_PYTHON_MODULE(msg)
 {
+  object msg_module(handle<>(borrowed(PyImport_AddModule("@(package).msg"))));
+  scope().attr("msg") = msg_module;
+  scope msg_scope = msg_module;
+
 @[for m in msg_list]@
-export_@(m)();
+  export_@(m)();
 @[end for]@
 }
-
