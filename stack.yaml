@@ -1,4 +1,4 @@
-Package: genpy-boost
+Package: genpybindings
 Version: 0.0.0
 Section: misc
 Priority: extra
@@ -11,8 +11,8 @@ Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 
-Catkin-ProjectName: genpy_boost
+Catkin-ProjectName: genpybindings
 Catkin-CopyrightType:  willowgarage
 Catkin-Depends: catkin, genmsg, roscpp_core
-Catkin-ROS-Message-Generator: py_boost
+Catkin-ROS-Message-Generator: pybindings
 Catkin-DebRulesType: python_distutils
